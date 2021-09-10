@@ -1,7 +1,6 @@
 import React from 'react';
 import Header from './Header';
-import Main from './Main';
-import Footer from './Footer';
+import MainPage from './MainPage';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
@@ -9,7 +8,7 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import api from '../utils/Api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import {Switch, Route, Redirect, Link} from 'react-router-dom';
+import {Switch, Route, Link} from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
@@ -143,28 +142,21 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Switch>
-        <Route exact path="/">
-          {loggedIn ?
-          <>
-          <Header>
-            <div className="header__container">
-              <p className="header__email">emal@mail.com</p>
-              <Link to="/sign-in" className="header__link header__link_color_grey">Выйти</Link>
-            </div>
-          </Header>
-          <Main
-            cards={cards}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardRemoveLike={handleRemoveCardLike}
-            onCardDelete={handleCardDelete}/>
-          <Footer />
-          </>
-          : <Redirect to="/sign-in" />}
-        </Route>
+        <ProtectedRoute
+          path="/"
+          exact
+          loggedIn={loggedIn}
+          component={MainPage}
+          // тут пришлось сделать отдельный компонент, чтобы компактно упаковать основную страницу в защищённый адрес
+          cards={cards}
+          onEditProfile={handleEditProfileClick}
+          onAddPlace={handleAddPlaceClick}
+          onEditAvatar={handleEditAvatarClick}
+          onCardClick={handleCardClick}
+          onCardLike={handleCardLike}
+          onCardRemoveLike={handleRemoveCardLike}
+          onCardDelete={handleCardDelete}
+        />
         <Route path="/sign-up">
           <Header>
             <Link to="/sign-in" className="header__link">Войти</Link>
