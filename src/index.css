@@ -7,6 +7,10 @@
 /* блок header */
 @import url(./blocks/header/header.css);
 @import url(./blocks/header/__logo/header__logo.css);
+@import url(./blocks/header/__container/header__container.css);
+@import url(./blocks/header/__link/header__link.css);
+@import url(./blocks/header/__link/_color/header__link_color_grey.css);
+@import url(./blocks/header/__email/header__email.css);
 /* блок main */
 @import url(./blocks/main/__profile/main__profile.css);
 @import url(./blocks/main/__elements/main__elements.css);
@@ -38,18 +42,31 @@
 @import url(./blocks/popup/popup.css);
 @import url(./blocks/popup/_opened/popup_opened.css);
 @import url(./blocks/popup/__container/popup__container.css);
+@import url(./blocks/popup/__container/_type/popup__container_type_status.css);
 @import url(./blocks/popup/__title/popup__title.css);
 @import url(./blocks/popup/__title/_type/popup__title_type_submit.css);
+@import url(./blocks/popup/__title/_type/popup__title_type_status.css);
 @import url(./blocks/popup/__close-icon/popup__close-icon.css);
 @import url(./blocks/popup/__image-container/popup__image-container.css);
 @import url(./blocks/popup/__image/popup__image.css);
 @import url(./blocks/popup/__caption/popup__caption.css);
+@import url(./blocks/popup/__status/popup__status.css);
+@import url(./blocks/popup/__status/_ok/popup__status_ok.css);
+@import url(./blocks/popup/__status/_ok/popup__status_error.css);
 /* блок form */
+@import url(./blocks/form/_type/form_type_sign.css);
 @import url(./blocks/form/__input-container/form__input-container.css);
+@import url(./blocks/form/__input-container/_type/form__input-container_type_sign.css);
 @import url(./blocks/form/__input/form__input.css);
 @import url(./blocks/form/__input/_type/form__input_type_error.css);
+@import url(./blocks/form/__input/_type/form__input_type_sign.css);
 @import url(./blocks/form/__input-error/form__input-error.css);
 @import url(./blocks/form/__input-error/_active/form__input-error_active.css);
 @import url(./blocks/form/__submit-button/form__submit-button.css);
+@import url(./blocks/form/__submit-button/_type/form__submit-button_type_sign.css);
 /* блок footer */
 @import url(./blocks/footer/__copyright/footer__copyright.css);
+/* блок sign */
+@import url(./blocks/sign/sign.css);
+@import url(./blocks/sign/__title/sign__title.css);
+@import url(./blocks/sign/__link/sign__link.css);

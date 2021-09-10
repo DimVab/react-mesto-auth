@@ -9,6 +9,11 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import api from '../utils/Api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import {Switch, Route, Redirect, Link} from 'react-router-dom';
+import Login from './Login';
+import Register from './Register';
+import ProtectedRoute from './ProtectedRoute';
+import InfoTooltip from './InfoTooltip';
 
 function App() {
 
@@ -17,9 +22,10 @@ function App() {
   const [isAddPlacePopupOpen, setOpenAddPlacePopup] = React.useState(false);
   const [isEditAvatarPopupOpen, setOpenEditAvatarPopup] = React.useState(false);
   const [isImagePopupOpen, setOpenImagePopup] = React.useState(false);
-  // пришлось создать новую переменную состояния, тк если изначально в SelectedCard создать пустой объект, то он будет восприниматься как true и при рендеринге страницы будет открываться пустой попап с картинкой; при изначальном значении null появляется ошибка
+  const [isStatusPopupOpen, setStatusPopup] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState({});
   const [cards, setCards] = React.useState([]);
+  const [loggedIn, setLoggedIn] = React.useState(true);
 
   React.useEffect(() => {
     api.getInitialData()
@@ -130,22 +136,49 @@ function App() {
     setOpenProfilePopup(false);
     setOpenAddPlacePopup(false);
     setOpenImagePopup(false);
+    setStatusPopup(false);
     setSelectedCard({});
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header />
-      <Main
-        cards={cards}
-        onEditProfile={handleEditProfileClick}
-        onAddPlace={handleAddPlaceClick}
-        onEditAvatar={handleEditAvatarClick}
-        onCardClick={handleCardClick}
-        onCardLike={handleCardLike}
-        onCardRemoveLike={handleRemoveCardLike}
-        onCardDelete={handleCardDelete}/>
-      <Footer />
+      <Switch>
+        <Route exact path="/">
+          {loggedIn ?
+          <>
+          <Header>
+            <div className="header__container">
+              <p className="header__email">emal@mail.com</p>
+              <Link to="/sign-in" className="header__link header__link_color_grey">Выйти</Link>
+            </div>
+          </Header>
+          <Main
+            cards={cards}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            onCardClick={handleCardClick}
+            onCardLike={handleCardLike}
+            onCardRemoveLike={handleRemoveCardLike}
+            onCardDelete={handleCardDelete}/>
+          <Footer />
+          </>
+          : <Redirect to="/sign-in" />}
+        </Route>
+        <Route path="/sign-up">
+          <Header>
+            <Link to="/sign-in" className="header__link">Войти</Link>
+          </Header>
+          <Register />
+        </Route>
+        <Route path="/sign-in">
+          <Header>
+            <Link to="/sign-up" className="header__link">Регистрация</Link>
+          </Header>
+          <Login />
+        </Route>
+      </Switch>
+
 
       <EditProfilePopup onUpdateUser={handleUpdateUser} isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} />
       <EditAvatarPopup onUpdateAvatar={handleUpdateAvatar} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} />
@@ -155,6 +188,25 @@ function App() {
         name="type_submit"
         title="Вы уверены?"
         submit="Да"
+      />
+
+      <InfoTooltip
+        name="type_status"
+        title="Вы успешно зарегистрировались!"
+        // isOpen={isStatusPopupOpen}
+        isOpen={false}
+        onClose={closeAllPopups}
+        isOk={true}
+      />
+      {/* здесь можно оставить 1 попап и изменять его стейтами */}
+
+      <InfoTooltip
+        name="type_status"
+        title="Что-то пошло не так! Попробуйте ещё раз."
+        // isOpen={isStatusPopupOpen}
+        isOpen={false}
+        onClose={closeAllPopups}
+        isOk={false}
       />
 
       <ImagePopup card={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups}/>
