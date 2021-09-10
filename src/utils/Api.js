@@ -75,6 +75,42 @@ class Api {
       .then(this._handleResponse);
   }
 
+  register(password, email) {
+    return fetch(`${this._baseUrl}/signup`, {
+      method: 'POST',
+      headers: this._headers,
+      body: JSON.stringify({
+        "password": password,
+        "email": email
+      })
+      })
+      .then(this._handleResponse);
+  }
+
+  authorize(password, email) {
+    return fetch(`${this._baseUrl}/signin`, {
+      method: 'POST',
+      headers: this._headers,
+      body: JSON.stringify({
+        "password": password,
+        "email": email
+      })
+      })
+      .then(this._handleResponse);
+  }
+
+  validateToken(token) {
+    return fetch(`${this._baseUrl}/users/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization' : `Bearer ${token}`
+      }
+      // сделать так, чтобы Content-type был св-вом объекта а авторизация прописывалась отдельно (как?)
+      })
+      .then(this._handleResponse);
+  }
+
   _handleResponse(res) {
     if(res.ok) {
       return res.json();
@@ -91,4 +127,11 @@ const api = new Api ({
   }
 });
 
-export default api;
+const authApi = new Api ({
+  baseUrl: 'https://auth.nomoreparties.co',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+export { api, authApi };

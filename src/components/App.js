@@ -6,9 +6,9 @@ import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
-import api from '../utils/Api';
+import { api, authApi } from '../utils/Api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import {Switch, Route, Link} from 'react-router-dom';
+import {Switch, Route, Link, Redirect, useHistory } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
@@ -22,9 +22,18 @@ function App() {
   const [isEditAvatarPopupOpen, setOpenEditAvatarPopup] = React.useState(false);
   const [isImagePopupOpen, setOpenImagePopup] = React.useState(false);
   const [isStatusPopupOpen, setStatusPopup] = React.useState(false);
+  const [isRegistrationOk, setRegistrationStatus] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState({});
   const [cards, setCards] = React.useState([]);
-  const [loggedIn, setLoggedIn] = React.useState(true);
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [email, setEmail] = React.useState('');
+
+  const history = useHistory();
+
+  React.useEffect(() => {
+    tokenCheck();
+  }, []);
+
 
   React.useEffect(() => {
     api.getInitialData()
@@ -43,7 +52,7 @@ function App() {
       if (e.key === 'Escape') {
         closeAllPopups();
       }
-    }
+    };
 
     document.addEventListener('keydown', closeByEscape)
 
@@ -113,6 +122,55 @@ function App() {
       });
   }
 
+  function handleRegister(password, email) {
+    authApi.register(password, email)
+      .then((res) => {
+        setStatusPopup(true);
+        setRegistrationStatus(true);
+        history.push('./sign-in');
+      })
+      .catch((err) => {
+        console.log(err);
+        setStatusPopup(true);
+        setRegistrationStatus(false);
+      });
+  }
+
+  function handleAuthorize(password, email) {
+    authApi.authorize(password, email)
+      .then((res) => {
+        localStorage.setItem('jwt', res.token);
+        const jwt = localStorage.getItem('jwt');
+        handleValidateToken(jwt);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function handleValidateToken(token) {
+    authApi.validateToken(token)
+      .then((res) => {
+        setLoggedIn(true);
+        setEmail(res.data.email);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function handleExit() {
+    localStorage.removeItem('jwt');
+    setLoggedIn(false);
+  }
+
+  function tokenCheck() {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      handleValidateToken(jwt);
+    }
+  }
+
   function handleEditAvatarClick () {
     setOpenEditAvatarPopup(true);
   }
@@ -148,6 +206,7 @@ function App() {
           loggedIn={loggedIn}
           component={MainPage}
           // тут пришлось сделать отдельный компонент, чтобы компактно упаковать основную страницу в защищённый адрес
+          email={email}
           cards={cards}
           onEditProfile={handleEditProfileClick}
           onAddPlace={handleAddPlaceClick}
@@ -156,18 +215,24 @@ function App() {
           onCardLike={handleCardLike}
           onCardRemoveLike={handleRemoveCardLike}
           onCardDelete={handleCardDelete}
+          onExit={handleExit}
         />
         <Route path="/sign-up">
-          <Header>
+          {loggedIn ? <Redirect to="./" /> :
+          <><Header>
             <Link to="/sign-in" className="header__link">Войти</Link>
           </Header>
-          <Register />
+          <Register onRegister={handleRegister} /></>}
         </Route>
         <Route path="/sign-in">
-          <Header>
+          {loggedIn ? <Redirect to="./" /> :
+          <><Header>
             <Link to="/sign-up" className="header__link">Регистрация</Link>
           </Header>
-          <Login />
+          <Login onLogin={handleAuthorize} /></> }
+        </Route>
+        <Route path="*">
+          {loggedIn ? <Redirect to="./" /> : <Redirect to="./sign-in" />}
         </Route>
       </Switch>
 
@@ -183,22 +248,9 @@ function App() {
       />
 
       <InfoTooltip
-        name="type_status"
-        title="Вы успешно зарегистрировались!"
-        // isOpen={isStatusPopupOpen}
-        isOpen={false}
+        isOpen={isStatusPopupOpen}
         onClose={closeAllPopups}
-        isOk={true}
-      />
-      {/* здесь можно оставить 1 попап и изменять его стейтами */}
-
-      <InfoTooltip
-        name="type_status"
-        title="Что-то пошло не так! Попробуйте ещё раз."
-        // isOpen={isStatusPopupOpen}
-        isOpen={false}
-        onClose={closeAllPopups}
-        isOk={false}
+        isOk={isRegistrationOk}
       />
 
       <ImagePopup card={selectedCard} isOpen={isImagePopupOpen} onClose={closeAllPopups}/>

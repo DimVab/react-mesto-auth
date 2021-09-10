@@ -1,12 +1,13 @@
 import Sign from './Sign';
 
-function Login () {
+function Login ({onLogin}) {
 
   return(
     <Sign
       title="Вход"
       name="sign-in"
       submit="Войти"
+      onSubmit={onLogin}
     />
   )
 }
