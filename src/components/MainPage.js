@@ -3,7 +3,7 @@ import Main from './Main';
 import Footer from './Footer';
 import {Link} from 'react-router-dom';
 
-function MainPage({cards, handleEditProfileClick, handleEditAvatarClick, handleAddPlaceClick, handleCardClick, handleCardLike, handleRemoveCardLike, handleCardDelete}) {
+function MainPage({cards, onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike, onCardRemoveLike, onCardDelete}) {
 
   return(
     <>
@@ -15,13 +15,13 @@ function MainPage({cards, handleEditProfileClick, handleEditAvatarClick, handleA
     </Header>
     <Main
       cards={cards}
-      onEditProfile={handleEditProfileClick}
-      onAddPlace={handleAddPlaceClick}
-      onEditAvatar={handleEditAvatarClick}
-      onCardClick={handleCardClick}
-      onCardLike={handleCardLike}
-      onCardRemoveLike={handleRemoveCardLike}
-      onCardDelete={handleCardDelete}/>
+      onEditProfile={onEditProfile}
+      onAddPlace={onAddPlace}
+      onEditAvatar={onEditAvatar}
+      onCardClick={onCardClick}
+      onCardLike={onCardLike}
+      onCardRemoveLike={onCardRemoveLike}
+      onCardDelete={onCardDelete}/>
     <Footer />
     </>
   )
