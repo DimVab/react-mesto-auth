@@ -106,7 +106,6 @@ class Api {
         'Content-Type': 'application/json',
         'Authorization' : `Bearer ${token}`
       }
-      // сделать так, чтобы Content-type был св-вом объекта а авторизация прописывалась отдельно (как?)
       })
       .then(this._handleResponse);
   }

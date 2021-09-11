@@ -1,9 +1,10 @@
 import headerLogo from '../images/icons/mesto.svg';
 
-function Header ({children}) {
+function Header ({loggedIn, children}) {
+
   return(
-    <header className="header root__header">
-      <img src={headerLogo} alt="Место. Россия" className="header__logo" />
+    <header className={`header root__header ${loggedIn && "header_logined"}`}>
+      <img src={headerLogo} alt="Место. Россия" className={`header__logo ${loggedIn && "header__logo_logined"}`} />
       {children}
     </header>
   )

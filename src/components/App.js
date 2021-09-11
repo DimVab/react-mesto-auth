@@ -31,7 +31,7 @@ function App() {
   const history = useHistory();
 
   React.useEffect(() => {
-    tokenCheck();
+    checkToken();
   }, []);
 
 
@@ -130,7 +130,7 @@ function App() {
         history.push('./sign-in');
       })
       .catch((err) => {
-        console.log(err);
+        console.log(`${err}: email или пароль не прошли валидацию на сервере при регистрации либо такой email уже занят`);
         setStatusPopup(true);
         setRegistrationStatus(false);
       });
@@ -139,35 +139,36 @@ function App() {
   function handleAuthorize(password, email) {
     authApi.authorize(password, email)
       .then((res) => {
-        localStorage.setItem('jwt', res.token);
-        const jwt = localStorage.getItem('jwt');
-        handleValidateToken(jwt);
+        if (res.token) {
+          localStorage.setItem('jwt', res.token);
+          checkToken();
+        }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(`${err}: неверный email или пароль`);
+        setStatusPopup(true);
+        setRegistrationStatus(false);
       });
   }
 
-  function handleValidateToken(token) {
-    authApi.validateToken(token)
+  function handleSignOut() {
+    localStorage.removeItem('jwt');
+    setLoggedIn(false);
+    // здесь не использовал history.push('./sign-in'), тк с изменением состояния loggedIn происходит автоматическая переадресация с помощью защищённого роута
+  }
+
+  function checkToken() {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      authApi.validateToken(jwt)
       .then((res) => {
         setLoggedIn(true);
         setEmail(res.data.email);
+        // здесь не использовал history.push('./'), тк с изменением состояния loggedIn происходит автоматическая переадресация с помощью защищённого роута
       })
       .catch((err) => {
-        console.log(err);
+        console.log(`${err}: токен в Local Storage не прошёл валидацию. Пройдите авторизацию заново`);
       });
-  }
-
-  function handleExit() {
-    localStorage.removeItem('jwt');
-    setLoggedIn(false);
-  }
-
-  function tokenCheck() {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt) {
-      handleValidateToken(jwt);
     }
   }
 
@@ -205,7 +206,7 @@ function App() {
           exact
           loggedIn={loggedIn}
           component={MainPage}
-          // тут пришлось сделать отдельный компонент, чтобы компактно упаковать основную страницу в защищённый адрес
+          // тут сделал отдельный компонент, чтобы компактно упаковать основную страницу в защищённый адрес
           email={email}
           cards={cards}
           onEditProfile={handleEditProfileClick}
@@ -215,7 +216,7 @@ function App() {
           onCardLike={handleCardLike}
           onCardRemoveLike={handleRemoveCardLike}
           onCardDelete={handleCardDelete}
-          onExit={handleExit}
+          onSignOut={handleSignOut}
         />
         <Route path="/sign-up">
           {loggedIn ? <Redirect to="./" /> :
