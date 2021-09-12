@@ -6,7 +6,8 @@ import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
-import { api, authApi } from '../utils/Api';
+import api from '../utils/Api';
+import auth from '../utils/Auth';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import {Switch, Route, Link, Redirect, useHistory } from 'react-router-dom';
 import Login from './Login';
@@ -123,7 +124,7 @@ function App() {
   }
 
   function handleRegister(password, email) {
-    authApi.register(password, email)
+    auth.register(password, email)
       .then((res) => {
         setStatusPopup(true);
         setRegistrationStatus(true);
@@ -137,7 +138,7 @@ function App() {
   }
 
   function handleAuthorize(password, email) {
-    authApi.authorize(password, email)
+    auth.authorize(password, email)
       .then((res) => {
         if (res.token) {
           localStorage.setItem('jwt', res.token);
@@ -160,7 +161,7 @@ function App() {
   function checkToken() {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
-      authApi.validateToken(jwt)
+      auth.validateToken(jwt)
       .then((res) => {
         setLoggedIn(true);
         setEmail(res.data.email);
