@@ -15,8 +15,6 @@ function EditProfilePopup({onUpdateAvatar, isOpen, onClose}) {
     onUpdateAvatar({
       avatar: avatarRef.current.value
     });
-
-    avatarRef.current.value = "";
   }
 
   return(
