@@ -1,6 +1,12 @@
 import React from 'react';
+import {Switch, Route, Link, Redirect, useHistory } from 'react-router-dom';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Header from './Header';
 import MainPage from './MainPage';
+import Login from './Login';
+import Register from './Register';
+import ProtectedRoute from './ProtectedRoute';
+import InfoTooltip from './InfoTooltip';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
@@ -8,25 +14,19 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import api from '../utils/Api';
 import auth from '../utils/Auth';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import {Switch, Route, Link, Redirect, useHistory } from 'react-router-dom';
-import Login from './Login';
-import Register from './Register';
-import ProtectedRoute from './ProtectedRoute';
-import InfoTooltip from './InfoTooltip';
 
 function App() {
 
   const [currentUser, setCurrentUser] = React.useState({});
+  const [cards, setCards] = React.useState([]);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setOpenAddPlacePopup] = React.useState(false);
   const [isEditAvatarPopupOpen, setOpenEditAvatarPopup] = React.useState(false);
   const [isImagePopupOpen, setOpenImagePopup] = React.useState(false);
   const [isStatusPopupOpen, setStatusPopup] = React.useState(false);
-  const [isRegistrationOk, setRegistrationStatus] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState({});
-  const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [isRegistrationOk, setRegistrationStatus] = React.useState(false);
   const [email, setEmail] = React.useState('');
 
   const history = useHistory();
