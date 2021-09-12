@@ -18,7 +18,7 @@ import InfoTooltip from './InfoTooltip';
 function App() {
 
   const [currentUser, setCurrentUser] = React.useState({});
-  const [isEditProfilePopupOpen, setOpenProfilePopup] = React.useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setOpenAddPlacePopup] = React.useState(false);
   const [isEditAvatarPopupOpen, setOpenEditAvatarPopup] = React.useState(false);
   const [isImagePopupOpen, setOpenImagePopup] = React.useState(false);
@@ -125,15 +125,16 @@ function App() {
 
   function handleRegister(password, email) {
     auth.register(password, email)
-      .then((res) => {
-        setStatusPopup(true);
+      .then(() => {
         setRegistrationStatus(true);
         history.push('./sign-in');
       })
       .catch((err) => {
         console.log(`${err}: email или пароль не прошли валидацию на сервере при регистрации либо такой email уже занят`);
-        setStatusPopup(true);
         setRegistrationStatus(false);
+      })
+      .finally(() => {
+        setStatusPopup(true);
       });
   }
 
@@ -178,7 +179,7 @@ function App() {
   }
 
   function handleEditProfileClick () {
-    setOpenProfilePopup(true);
+    setIsEditProfilePopupOpen(true);
   }
 
   function handleAddPlaceClick () {
@@ -192,7 +193,7 @@ function App() {
 
   function closeAllPopups () {
     setOpenEditAvatarPopup(false);
-    setOpenProfilePopup(false);
+    setIsEditProfilePopupOpen(false);
     setOpenAddPlacePopup(false);
     setOpenImagePopup(false);
     setStatusPopup(false);
